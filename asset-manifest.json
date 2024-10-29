@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Spiridonovads/vk/static/css/main.252bb177.css",
+    "main.js": "/Spiridonovads/vk/static/js/main.b94e3f97.js",
+    "static/js/453.ed3810f9.chunk.js": "/Spiridonovads/vk/static/js/453.ed3810f9.chunk.js",
+    "index.html": "/Spiridonovads/vk/index.html",
+    "main.252bb177.css.map": "/Spiridonovads/vk/static/css/main.252bb177.css.map",
+    "main.b94e3f97.js.map": "/Spiridonovads/vk/static/js/main.b94e3f97.js.map",
+    "453.ed3810f9.chunk.js.map": "/Spiridonovads/vk/static/js/453.ed3810f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.252bb177.css",
+    "static/js/main.b94e3f97.js"
+  ]
+}
