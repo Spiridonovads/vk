@@ -7,7 +7,7 @@ import style from "./style.module.css";
 
 const MultiDropdown: React.FC = () => {
   const selectRef = useRef<HTMLDivElement>(null);
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState<string>("stars");
 
   const onChange = (event: SelectChangeEvent<string>) => {
     const res = event.target.value;
