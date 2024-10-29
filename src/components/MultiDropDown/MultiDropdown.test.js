@@ -22,22 +22,20 @@ describe("MultiDropdown Component", () => {
     render(<MultiDropdown />);
     await userEvent.click(screen.getByLabelText(/filters/i));
 
-    await userEvent.click(screen.getByText(/number of stars/i));
-    expect(appStore.fetchData).toHaveBeenCalledWith("stars");
+    await userEvent.click(screen.getByText(/number of forks/i));
+    expect(appStore.fetchData).toHaveBeenCalledWith("forks");
     const select = screen.getByRole("combobox");
-    expect(select).toHaveTextContent("Number of stars");
+    expect(select).toHaveTextContent("Number of forks");
   });
 
   test("does not call fetchData when the same option is selected", async () => {
     render(<MultiDropdown />);
 
     await userEvent.click(screen.getByLabelText(/filters/i));
-    await userEvent.click(screen.getByText(/number of stars/i));
 
-    await userEvent.click(screen.getByLabelText(/filters/i));
     const allStarsElements = screen.getAllByText(/number of stars/i);
     await userEvent.click(allStarsElements[0]);
 
-    expect(appStore.fetchData).toHaveBeenCalledTimes(1);
+    expect(appStore.fetchData).toHaveBeenCalledTimes(0);
   });
 });
