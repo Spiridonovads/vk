@@ -2,8 +2,20 @@ import React, { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import classNames from "classnames";
 import style from "./Card.module.css";
-import { Grid, ListItem, ListItemText } from "@mui/material";
+import {
+  Grid,
+  Card as CardStyle,
+  CardMedia,
+  CardContent,
+  Typography,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import appStore from "../../configs/store/AppStore/AppStore";
+import { SelectChangeEvent } from "@mui/material/Select";
 
 export interface CardProps {
   login: string;
@@ -13,14 +25,14 @@ export interface CardProps {
 
 export const Card: React.FC<CardProps> = observer(
   ({ login, avatar_url, name }) => {
-    const [score, setScore] = useState<number>(0);
+    const [score, setScore] = useState<string>("1");
     const [edit, setEdit] = useState<boolean>(false);
     const selectRef = useRef<HTMLDivElement>(null);
 
     const scoreClass = classNames({
-      [style.bad]: score >= 0 && score <= 1,
-      [style.normal]: score > 1 && score <= 3,
-      [style.good]: score > 3 && score <= 5,
+      [style.bad]: +score >= 0 && +score <= 1,
+      [style.normal]: +score > 1 && +score <= 3,
+      [style.good]: +score > 3 && +score <= 5,
     });
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -47,63 +59,63 @@ export const Card: React.FC<CardProps> = observer(
       setEdit(!edit);
     }
 
-    const onScoreChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const onScoreChange = (event: SelectChangeEvent<string>) => {
       const value = parseInt(event.target.value);
-      setScore(value);
+      setScore(value.toString());
     };
 
     return (
-      <Grid item xs={12} md={6} lg={4}>
-        <ListItem
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <CardStyle
           sx={{
             overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            margin: "10px",
           }}
         >
-          <figure className={style.card}>
-            {" "}
-            <img
-              src={avatar_url}
-              alt={`Avatar of ${login}`}
-              className={style.img}
-            />
-            <figcaption className={style.truncate}>
-              <ListItemText primary={name} />
-              <button className={style.button} onClick={onHideClick}>
-                hide
-              </button>
-            </figcaption>
-            <figcaption className={style.truncate}>
-              <div>
-                Score: <span className={scoreClass}>{score}</span>
-              </div>
-              <button
-                className={`${style.button} ${edit && style.buttonActive}`}
-                onClick={onEditClick}
-              >
-                edit
-              </button>
-            </figcaption>
+          <CardMedia
+            component="img"
+            height="140"
+            image={avatar_url}
+            alt={`Avatar of ${login}`}
+          />
+          <CardContent>
+            <Typography variant="h6" noWrap>
+              {name}
+            </Typography>
+            <Button variant="outlined" sx={{ mt: 1 }} onClick={onHideClick}>
+              Hide
+            </Button>
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              Score: <span className={scoreClass}>{score}</span>
+            </Typography>
+            <Button variant="outlined" sx={{ mt: 1 }} onClick={onEditClick}>
+              Edit
+            </Button>
             {edit && (
-              <form className={style.editForm}>
-                <legend>select a rating: </legend>
-                <div ref={selectRef}>
-                  <select onChange={onScoreChange} value={score}>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </div>
+              <form style={{ marginTop: "5px" }}>
+                <legend>Select a rating:</legend>
+                <FormControl fullWidth sx={{ mt: 1 }}>
+                  <InputLabel id="rating-select-label">Rating</InputLabel>
+                  <Select
+                    labelId="rating-select-label"
+                    value={score}
+                    onChange={onScoreChange}
+                    label="Рейтинг"
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                    <MenuItem value={4}>4</MenuItem>
+                    <MenuItem value={5}>5</MenuItem>
+                  </Select>
+                </FormControl>
               </form>
             )}
-          </figure>
-        </ListItem>
+          </CardContent>
+        </CardStyle>
       </Grid>
     );
   }

@@ -70,7 +70,7 @@ describe("App Component", () => {
     fireEvent.scroll(window, { target: { scrollY: 100 } });
 
     await waitFor(() => {
-      expect(appStore.fetchData).toHaveBeenCalledTimes(1); // Should only be called once on initial render
+      expect(appStore.fetchData).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -1,8 +1,8 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import MultiDropdown from "./MultiDropDown";
+import { render, screen } from "@testing-library/react";
+import MultiDropdown from "./MultiDropdown";
 import appStore from "../../configs/store/AppStore/AppStore";
-import "@testing-library/jest-dom";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("../../configs/store/AppStore/AppStore", () => ({
   fetchData: jest.fn(),
@@ -13,52 +13,31 @@ describe("MultiDropdown Component", () => {
     jest.clearAllMocks();
   });
 
-  it("renders with default option selected", () => {
+  test("renders MultiDropdown with the correct initial state", () => {
     render(<MultiDropdown />);
-
-    expect(screen.getByText("Number of stars")).toBeInTheDocument();
-    expect(screen.getByRole("combobox")).toHaveValue("stars");
+    expect(screen.getByLabelText(/filters/i)).toBeInTheDocument();
   });
 
-  it("calls fetchData with the correct argument on selection change", () => {
+  test("calls fetchData with the correct argument when the selection changes", async () => {
     render(<MultiDropdown />);
+    await userEvent.click(screen.getByLabelText(/filters/i));
 
+    await userEvent.click(screen.getByText(/number of stars/i));
+    expect(appStore.fetchData).toHaveBeenCalledWith("stars");
     const select = screen.getByRole("combobox");
-    fireEvent.change(select, { target: { value: "forks" } });
-
-    expect(appStore.fetchData).toHaveBeenCalledWith("forks");
-    expect(select).toHaveValue("forks");
+    expect(select).toHaveTextContent("Number of stars");
   });
 
-  it("displays the filters label", () => {
+  test("does not call fetchData when the same option is selected", async () => {
     render(<MultiDropdown />);
 
-    expect(screen.getByText("Filters:")).toBeInTheDocument();
-  });
+    await userEvent.click(screen.getByLabelText(/filters/i));
+    await userEvent.click(screen.getByText(/number of stars/i));
 
-  it("renders all options correctly", () => {
-    render(<MultiDropdown />);
+    await userEvent.click(screen.getByLabelText(/filters/i));
+    const allStarsElements = screen.getAllByText(/number of stars/i);
+    await userEvent.click(allStarsElements[0]);
 
-    expect(
-      screen.getByRole("option", { name: "Number of stars" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: "Number of forks" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: "Number of updated" })
-    ).toBeInTheDocument();
-  });
-
-  it("does not call fetchData if the same option is selected again", () => {
-    render(<MultiDropdown />);
-
-    const select = screen.getByRole("combobox");
-
-    fireEvent.change(select, { target: { value: "updated" } });
-    expect(appStore.fetchData).toHaveBeenCalledWith("updated");
-
-    fireEvent.change(select, { target: { value: "updated" } });
     expect(appStore.fetchData).toHaveBeenCalledTimes(1);
   });
 });

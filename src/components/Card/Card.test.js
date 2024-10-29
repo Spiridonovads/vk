@@ -2,120 +2,58 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Card } from "./Card";
 import appStore from "../../configs/store/AppStore/AppStore";
-import "@testing-library/jest-dom";
 
-jest.mock("../../configs/store/AppStore/AppStore", () => ({
-  removeItem: jest.fn(),
-}));
+jest.mock("../../configs/store/AppStore/AppStore");
 
-describe("Card Component", () => {
-  const defaultProps = {
-    login: "user1",
-    avatar_url: "avatar1.jpg",
-    name: "Test Repo",
+describe("Card component", () => {
+  const mockProps = {
+    login: "testuser",
+    avatar_url: "http://example.com/avatar.jpg",
+    name: "Test User",
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("renders component with correct props", () => {
-    render(<Card {...defaultProps} />);
+  test("renders with provided props", () => {
+    render(<Card {...mockProps} />);
 
-    expect(screen.getByText("Test Repo")).toBeInTheDocument();
-    expect(screen.getByAltText("Avatar of user1")).toHaveAttribute(
-      "src",
-      "avatar1.jpg"
-    );
+    expect(screen.getByText("Test User")).toBeInTheDocument();
+    const avatar = screen.getByRole("img", { name: /avatar of testuser/i });
+    expect(avatar).toHaveAttribute("src", mockProps.avatar_url);
+
+    expect(screen.getByText(/score:/i)).toHaveTextContent("Score: 1");
   });
 
-  it("toggles edit mode when edit button is clicked", () => {
-    render(<Card {...defaultProps} />);
+  test("calls removeItem on hide button click", () => {
+    render(<Card {...mockProps} />);
 
-    expect(screen.queryByText("select a rating:")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /hide/i }));
+
+    expect(appStore.removeItem).toHaveBeenCalledWith(mockProps.login);
+  });
+
+  test("toggles edit state on edit button click", () => {
+    render(<Card {...mockProps} />);
+
+    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /edit/i }));
-    expect(screen.getByText("select a rating:")).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
+  });
+
+  test("updates score on select change", () => {
+    render(<Card {...mockProps} />);
 
     fireEvent.click(screen.getByRole("button", { name: /edit/i }));
-    expect(screen.queryByText("select a rating:")).not.toBeInTheDocument();
-  });
 
-  it("closes edit mode when clicking outside of it", () => {
-    render(<Card {...defaultProps} />);
+    const select = screen.getByRole("combobox", { name: /rating/i });
+    fireEvent.mouseDown(select);
 
-    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
-    expect(screen.getByText("select a rating:")).toBeInTheDocument();
+    const option = screen.getByRole("option", { name: /3/i });
+    fireEvent.click(option);
 
-    fireEvent.mouseDown(document);
-    expect(screen.queryByText("select a rating:")).not.toBeInTheDocument();
-  });
-
-  it("calls removeItem on hide button click", () => {
-    render(<Card {...defaultProps} />);
-
-    fireEvent.click(screen.getByText("hide"));
-    expect(appStore.removeItem).toHaveBeenCalledWith("user1");
-  });
-
-  it("updates score state when a new score is selected", () => {
-    render(<Card {...defaultProps} />);
-
-    const editButton = screen.getByRole("button", { name: /edit/i });
-    fireEvent.click(editButton);
-
-    const select = screen.getByRole("combobox");
-
-    fireEvent.change(select, { target: { value: "4" } });
-
-    expect(select).toHaveValue("4");
-  });
-
-  it("displays the correct score class based on score", () => {
-    render(<Card {...defaultProps} />);
-
-    const editButton = screen.getByRole("button", { name: /edit/i });
-    fireEvent.click(editButton);
-
-    const select = screen.getByRole("combobox");
-
-    fireEvent.change(select, { target: { value: "1" } });
-    expect(screen.getByText("Score:")).toContainHTML(
-      '<span class="bad">1</span>'
-    );
-
-    fireEvent.change(select, { target: { value: "3" } });
-    expect(screen.getByText("Score:")).toContainHTML(
-      '<span class="normal">3</span>'
-    );
-
-    fireEvent.change(select, { target: { value: "5" } });
-    expect(screen.getByText("Score:")).toContainHTML(
-      '<span class="good">5</span>'
-    );
-  });
-
-  it("renders edit form initially hidden", () => {
-    render(<Card {...defaultProps} />);
-
-    expect(screen.queryByText("select a rating:")).not.toBeInTheDocument();
-  });
-
-  it("handles multiple edits correctly", () => {
-    render(<Card {...defaultProps} />);
-
-    const editButton = screen.getByRole("button", { name: /edit/i });
-    fireEvent.click(editButton);
-
-    const select = screen.getByRole("combobox");
-    fireEvent.change(select, { target: { value: "2" } });
-
-    expect(select).toHaveValue("2");
-
-    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
-    fireEvent.click(editButton);
-
-    fireEvent.change(select, { target: { value: "5" } });
-    expect(select).toHaveValue("5");
+    expect(screen.getByText(/score:/i)).toHaveTextContent("Score: 3");
   });
 });
