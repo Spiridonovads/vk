@@ -1,13 +1,38 @@
-body {
+/* CSS Reset */
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html {
+  line-height: 1.15; /* Уменьшаем высоту строк */
+  -webkit-text-size-adjust: 100%; /* Предотвращаем изменение размера текста на мобильных устройствах */
 }
+
+body {
+  font-family: Arial, sans-serif; /* Устанавливаем стандартный шрифт */
+  font-size: 16px; /* Устанавливаем размер шрифта */
+  font-weight: normal; /* Устанавливаем нормальный вес шрифта */
+  color: #000; /* Устанавливаем цвет текста по умолчанию */
+  background-color: #fff; /* Устанавливаем цвет фона по умолчанию */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal; /* Убираем жирный шрифт у заголовков */
+}
+
+ul, ol {
+  list-style: none; /* Убираем маркеры у списков */
+}
+
+a {
+  text-decoration: none; /* Убираем подчеркивание у ссылок */
+  color: inherit; /* Устанавливаем цвет ссылок по умолчанию */
+}
+
+img {
+  max-width: 100%; /* Устанавливаем максимальную ширину изображений */
+  height: auto; /* Устанавливаем автоматическую высоту изображений */
+}
+

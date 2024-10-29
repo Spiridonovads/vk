@@ -1,0 +1,11 @@
+.wrapper {
+  padding: 0 40px;
+  width: 100%;
+  display: flex;
+}
+
+.miltiForm {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
