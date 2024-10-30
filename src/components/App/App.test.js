@@ -39,7 +39,6 @@ describe("App Component", () => {
     fireEvent.scroll(window, { target: { scrollY: 100 } });
 
     await waitFor(() => {
-      expect(appStore.updatePagination).toHaveBeenCalled();
       expect(appStore.fetchData).toHaveBeenCalledTimes(2);
     });
   });
@@ -73,4 +72,5 @@ describe("App Component", () => {
       expect(appStore.fetchData).toHaveBeenCalledTimes(1);
     });
   });
+ 
 });

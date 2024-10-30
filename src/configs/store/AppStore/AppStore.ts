@@ -1,5 +1,5 @@
-import createAppStore from "./createAppStore";
+import СreateAppStore from "./СreateAppStore";
 
-const appStore = new createAppStore();
+const appStore = new СreateAppStore();
 
 export default appStore;

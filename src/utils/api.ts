@@ -1,5 +1,5 @@
-export const getData = (page: number, sort: string) => {
-  return fetch(
+export const getData = async (page: number, sort: string) => {
+  const response = await fetch(
     `https://api.github.com/search/repositories?q=stars:>1&sort=${sort}&order=desc&per_page=20&page=${page}`,
     {
       method: "GET",
@@ -7,9 +7,9 @@ export const getData = (page: number, sort: string) => {
         "Content-Type": "application/json",
       },
     }
-  )
-    .then((res) => res.json())
-    .catch((err) => {
-      throw new Error(`${err.message}`);
-    });
+  );
+  if (!response.ok) {
+    throw new Error(`Error fetching data: ${response.statusText}`);
+  }
+  return await response.json();
 };

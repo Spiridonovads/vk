@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import classNames from "classnames";
 import style from "./Card.module.css";
@@ -9,59 +9,46 @@ import {
   CardContent,
   Typography,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import appStore from "../../configs/store/AppStore/AppStore";
+import { DropdownList } from "../DroprdownList/DropdownList";
 import { SelectChangeEvent } from "@mui/material/Select";
 
 export interface CardProps {
   login: string;
   avatar_url: string;
   name: string;
+  id: number;
+  link: string;
 }
 
 export const Card: React.FC<CardProps> = observer(
-  ({ login, avatar_url, name }) => {
-    const [score, setScore] = useState<string>("1");
-    const [edit, setEdit] = useState<boolean>(false);
-    const selectRef = useRef<HTMLDivElement>(null);
+  ({ login, avatar_url, name, id, link }) => {
+    const [editState, setEditState] = useState<boolean>(false);
+    const [ratingState, setRatingState] = useState<string>("1");
 
-    const scoreClass = classNames({
-      [style.bad]: +score >= 0 && +score <= 1,
-      [style.normal]: +score > 1 && +score <= 3,
-      [style.good]: +score > 3 && +score <= 5,
+    const cardFormRef = useRef<HTMLDivElement>(null);
+
+    const options = ["1", "2", "3", "4", "5"];
+    const optionsContent = ["1", "2", "3", "4", "5"];
+
+    const RatingClass = classNames(`${style.bad}`, {
+      [style.normal]: +ratingState > 1 && +ratingState <= 3,
+      [style.good]: +ratingState > 3 && +ratingState <= 5,
     });
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        selectRef.current &&
-        !selectRef.current.contains(event.target as Node)
-      ) {
-        setEdit(false);
-      }
+    const onHideClick = (): void => {
+      appStore.removeItem(id);
     };
 
-    useEffect(() => {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, []);
+    const onEditClick = (): void => {
+      setEditState(!editState);
+    };
 
-    function onHideClick(): void {
-      appStore.removeItem(login);
-    }
-
-    function onEditClick(): void {
-      setEdit(!edit);
-    }
-
-    const onScoreChange = (event: SelectChangeEvent<string>) => {
-      const value = parseInt(event.target.value);
-      setScore(value.toString());
+    const handleCardOptionChange = (event: SelectChangeEvent<string>) => {
+      if (event.target.value !== ratingState) {
+        setRatingState(event.target.value);
+      }
     };
 
     return (
@@ -85,34 +72,35 @@ export const Card: React.FC<CardProps> = observer(
             <Typography variant="h6" noWrap>
               {name}
             </Typography>
+            <Typography
+              noWrap
+              className={RatingClass}
+              sx={{ textDecoration: "underline" }}
+            >
+              <a href={link} target="_blank" rel="noreferrer">
+                link to the repo
+              </a>
+            </Typography>
             <Button variant="outlined" sx={{ mt: 1 }} onClick={onHideClick}>
               Hide
             </Button>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              Score: <span className={scoreClass}>{score}</span>
+              You appreciated:{" "}
+              <span className={RatingClass}>{ratingState}</span>
             </Typography>
             <Button variant="outlined" sx={{ mt: 1 }} onClick={onEditClick}>
               Edit
             </Button>
-            {edit && (
-              <form style={{ marginTop: "5px" }}>
-                <legend>Select a rating:</legend>
-                <FormControl fullWidth sx={{ mt: 1 }}>
-                  <InputLabel id="rating-select-label">Rating</InputLabel>
-                  <Select
-                    labelId="rating-select-label"
-                    value={score}
-                    onChange={onScoreChange}
-                    label="Рейтинг"
-                  >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                    <MenuItem value={4}>4</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                  </Select>
-                </FormControl>
-              </form>
+            {editState && (
+              <DropdownList
+                id="rating-select-label"
+                options={options}
+                optionsContent={optionsContent}
+                label="Rating"
+                value={ratingState}
+                setValue={handleCardOptionChange}
+                ref={cardFormRef}
+              />
             )}
           </CardContent>
         </CardStyle>

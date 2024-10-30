@@ -23,7 +23,7 @@ describe("Card component", () => {
     const avatar = screen.getByRole("img", { name: /avatar of testuser/i });
     expect(avatar).toHaveAttribute("src", mockProps.avatar_url);
 
-    expect(screen.getByText(/score:/i)).toHaveTextContent("Score: 1");
+    expect(screen.getByText(/You appreciated:/i)).toHaveTextContent("1");
   });
 
   test("calls removeItem on hide button click", () => {
@@ -31,7 +31,7 @@ describe("Card component", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /hide/i }));
 
-    expect(appStore.removeItem).toHaveBeenCalledWith(mockProps.login);
+    expect(appStore.removeItem).toHaveBeenCalledWith(mockProps.id);
   });
 
   test("toggles edit state on edit button click", () => {
@@ -54,6 +54,6 @@ describe("Card component", () => {
     const option = screen.getByRole("option", { name: /3/i });
     fireEvent.click(option);
 
-    expect(screen.getByText(/score:/i)).toHaveTextContent("Score: 3");
+    expect(screen.getByText(/You appreciated:/i)).toHaveTextContent("You appreciated: 3");
   });
 });
