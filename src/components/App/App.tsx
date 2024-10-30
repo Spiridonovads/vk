@@ -64,7 +64,6 @@ export const App = observer(() => {
         {appStore.items && (
           <InfiniteScroll
             hasMore={appStore.hasMore}
-            isLoading={appStore.loading}
             loadMore={fetchMoreData}
           />
         )}

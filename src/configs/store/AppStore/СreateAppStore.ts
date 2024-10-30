@@ -10,11 +10,10 @@ export interface Item {
 
 class СreateAppStore {
   items: Array<Item> = [];
-  page: number = 1;
+  page: number = 0;
   hasMore: boolean = true;
   itemsCount: number = 0;
   error: string = "";
-  loading: boolean = false;
 
   constructor() {
     makeObservable(this, {
@@ -29,23 +28,23 @@ class СreateAppStore {
     });
   }
 
-  async fetchData(value?: string) {
-    this.loading = true;
+  async fetchData(sort?: string) {
     try {
-      if (value) {
+      if (sort) {
         this.clearEverything();
       }
-      const response = await getData(this.page, value || "");
+      this.updatePagination();
+      const response = await getData(this.page, sort || "");
+
       runInAction(() => {
         if (response.items) {
           if (this.itemsCount >= response.total_count) {
             this.hasMore = false;
           }
           this.items = [...this.items, ...response.items];
-          this.updatePagination();
         }
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       runInAction(() => {
         if (error instanceof Error) {
           this.error = error.message;
@@ -55,8 +54,6 @@ class СreateAppStore {
           this.error = "An unknown error occurred";
         }
       });
-    } finally {
-      this.loading = false;
     }
   }
 
@@ -72,7 +69,7 @@ class СreateAppStore {
   }
 
   removeItem(id: number) {
-    this.items = this.items.filter((item) => item.id !== id);
+    this.items = [...this.items].filter((item) => item.id !== id);
   }
 }
 

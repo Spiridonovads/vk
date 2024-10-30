@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { observer } from "mobx-react-lite";
 import appStore from "../../configs/store/AppStore/AppStore";
 import { App } from "./App";
 

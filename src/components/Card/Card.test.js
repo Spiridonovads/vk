@@ -10,6 +10,7 @@ describe("Card component", () => {
     login: "testuser",
     avatar_url: "http://example.com/avatar.jpg",
     name: "Test User",
+    id: 1
   };
 
   beforeEach(() => {

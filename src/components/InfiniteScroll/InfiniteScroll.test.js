@@ -77,14 +77,6 @@ describe("InfiniteScroll Component", () => {
     expect(screen.getByText("Item 3")).toBeInTheDocument();
   });
 
-  it("displays loading text when isLoading is true", () => {
-    render(
-      <InfiniteScroll hasMore={true} isLoading={true} loadMore={loadMoreMock} />
-    );
-
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
-  });
-
   it("calls loadMore when last item is intersecting", () => {
     render(
       <InfiniteScroll
