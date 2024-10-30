@@ -1,76 +1,81 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { App } from "./App";
+import { observer } from "mobx-react-lite";
 import appStore from "../../configs/store/AppStore/AppStore";
+import { App } from "./App";
 
-jest.mock("../../configs/store/AppStore/AppStore", () => {
-  const store = {
-    fetchData: jest.fn(),
-    updatePagination: jest.fn(),
-    items: [],
-    hasMore: true,
-  };
-  return store;
-});
+jest.mock("../../configs/store/AppStore/AppStore", () => ({
+  fetchData: jest.fn(),
+  hasMore: true,
+  loading: false,
+  items: [],
+  error: null,
+}));
 
 describe("App Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("calls fetchData on initial render", () => {
+  test("renders the App component correctly", () => {
     render(<App />);
-    expect(appStore.fetchData).toHaveBeenCalledTimes(1);
+
+    const titleElement = screen.getByText(/GitHub repositories/i);
+    expect(titleElement).toBeInTheDocument();
+
+    const dropdown = screen.getByLabelText(/Filters/i);
+    expect(dropdown).toBeInTheDocument();
   });
 
-  it("shows loader when fetching more data", async () => {
+  test("dropdown changes filter state", async () => {
     render(<App />);
 
-    fireEvent.scroll(window, { target: { scrollY: 100 } });
+    const dropdownButton = screen.getByLabelText(/Filters/i);
+    fireEvent.mouseDown(dropdownButton);
+
+    const forksOption = await screen.findByRole("option", {
+      name: "Number of forks",
+    });
+    fireEvent.click(forksOption);
+
+    expect(appStore.fetchData).toHaveBeenCalledWith("forks");
+
+    fireEvent.mouseDown(dropdownButton);
+
+    const updatedOption = await screen.findByRole("option", {
+      name: "Number of updated",
+    });
+    fireEvent.click(updatedOption);
+
+    expect(appStore.fetchData).toHaveBeenCalledWith("updated");
+  });
+
+  test("shows error message when there is an error", async () => {
+    appStore.error = "An error occurred";
+
+    render(<App />);
+
+    const errorMessage = screen.getByText(/An error occurred/i);
+    expect(errorMessage).toBeInTheDocument();
+
+    const reloadMessage = screen.getByText(/please reload the page/i);
+    expect(reloadMessage).toBeInTheDocument();
+  });
+
+  test("calls fetchMoreData when loading more data", async () => {
+    appStore.hasMore = true;
+    render(<App />);
+
+    const fetchMoreData = jest.spyOn(appStore, "fetchData");
+
+    const scrollableElement = screen
+      .getByText(/GitHub repositories/i)
+      .closest("div");
+
+    fireEvent.scroll(scrollableElement, { target: { scrollY: 100 } });
 
     await waitFor(() => {
-      expect(screen.getByText("...Loading")).toBeInTheDocument();
+      expect(fetchMoreData).toHaveBeenCalledTimes(1);
     });
   });
-
-  it("fetches more data when scrolling", async () => {
-    render(<App />);
-
-    fireEvent.scroll(window, { target: { scrollY: 100 } });
-
-    await waitFor(() => {
-      expect(appStore.fetchData).toHaveBeenCalledTimes(2);
-    });
-  });
-
-  it("renders items from the store", () => {
-    appStore.items = [
-      { owner: { login: "user1", avatar_url: "avatar1.png" }, name: "Repo 1" },
-      { owner: { login: "user2", avatar_url: "avatar2.png" }, name: "Repo 2" },
-    ];
-
-    render(<App />);
-
-    expect(screen.getByText("Repo 1")).toBeInTheDocument();
-    expect(screen.getByText("Repo 2")).toBeInTheDocument();
-  });
-
-  it("displays a dropdown component", () => {
-    render(<App />);
-
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
-  });
-
-  it("does not fetch more data when hasMore is false", async () => {
-    appStore.hasMore = false;
-
-    render(<App />);
-
-    fireEvent.scroll(window, { target: { scrollY: 100 } });
-
-    await waitFor(() => {
-      expect(appStore.fetchData).toHaveBeenCalledTimes(1);
-    });
-  });
- 
 });

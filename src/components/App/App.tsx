@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Card } from "../Card/Card";
+import { InfiniteScroll } from "../InfiniteScroll/InfiniteScroll";
 import { DropdownList } from "../DroprdownList/DropdownList";
 import appStore from "../../configs/store/AppStore/AppStore";
 import { SelectChangeEvent } from "@mui/material/Select";
 
-import { Container, Grid, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 export const App = observer(() => {
   const [filterState, setFilterState] = useState<string>("stars");
@@ -62,32 +61,13 @@ export const App = observer(() => {
           value={filterState}
           setValue={handleAppOptionChange}
         />
-        <InfiniteScroll
-          dataLength={appStore.items?.length}
-          next={fetchMoreData}
-          hasMore={appStore.hasMore}
-          loader={
-            <Typography variant="body1" sx={{ padding: "10px 0" }}>
-              ...Loading
-            </Typography>
-          }
-          style={{
-            marginTop: "20px",
-          }}
-        >
-          <Grid container spacing={1}>
-            {appStore.items.map((item, i: number) => (
-              <Card
-                key={i}
-                login={item.owner.login}
-                avatar_url={item.owner.avatar_url}
-                name={item.name}
-                id={item.id}
-                link={item.html_url}
-              />
-            ))}
-          </Grid>
-        </InfiniteScroll>
+        {appStore.items && (
+          <InfiniteScroll
+            hasMore={appStore.hasMore}
+            isLoading={appStore.loading}
+            loadMore={fetchMoreData}
+          />
+        )}
       </Container>
       {appStore.error && (
         <>

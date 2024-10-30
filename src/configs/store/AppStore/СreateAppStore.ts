@@ -5,7 +5,6 @@ export interface Item {
   name: string;
   owner: { login: string; avatar_url: string };
   id: number;
-
   html_url: string;
 }
 
@@ -15,6 +14,7 @@ class СreateAppStore {
   hasMore: boolean = true;
   itemsCount: number = 0;
   error: string = "";
+  loading: boolean = false;
 
   constructor() {
     makeObservable(this, {
@@ -30,6 +30,7 @@ class СreateAppStore {
   }
 
   async fetchData(value?: string) {
+    this.loading = true;
     try {
       if (value) {
         this.clearEverything();
@@ -37,7 +38,6 @@ class СreateAppStore {
       const response = await getData(this.page, value || "");
       runInAction(() => {
         if (response.items) {
-          console.log(response.items);
           if (this.itemsCount >= response.total_count) {
             this.hasMore = false;
           }
@@ -55,6 +55,8 @@ class СreateAppStore {
           this.error = "An unknown error occurred";
         }
       });
+    } finally {
+      this.loading = false;
     }
   }
 

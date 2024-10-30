@@ -20,10 +20,11 @@ export interface CardProps {
   name: string;
   id: number;
   link: string;
+  mesureRef?: (node: HTMLElement | null) => void;
 }
 
 export const Card: React.FC<CardProps> = observer(
-  ({ login, avatar_url, name, id, link }) => {
+  ({ login, avatar_url, name, id, link, mesureRef }) => {
     const [editState, setEditState] = useState<boolean>(false);
     const [ratingState, setRatingState] = useState<string>("1");
 
@@ -52,7 +53,7 @@ export const Card: React.FC<CardProps> = observer(
     };
 
     return (
-      <Grid item xs={12} sm={6} md={4} lg={3}>
+      <Grid item xs={12} sm={6} md={4} lg={3} ref={mesureRef}>
         <CardStyle
           sx={{
             overflow: "hidden",
