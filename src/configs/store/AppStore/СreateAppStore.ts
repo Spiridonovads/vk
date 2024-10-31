@@ -62,7 +62,7 @@ class СreateAppStore {
   }
 
   clearEverything() {
-    this.page = 1;
+    this.page = 0;
     this.itemsCount = 0;
     this.items = [];
   }
