@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  ForwardedRef,
-  useRef,
-} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Toaster } from "react-hot-toast";
 import { observer } from "mobx-react-lite";
 import { InfiniteScroll } from "../InfiniteScroll/InfiniteScroll";

@@ -1,4 +1,3 @@
-/* CSS Reset */
 * {
   margin: 0;
   padding: 0;
@@ -6,33 +5,38 @@
 }
 
 html {
-  line-height: 1.15; /* Уменьшаем высоту строк */
-  -webkit-text-size-adjust: 100%; /* Предотвращаем изменение размера текста на мобильных устройствах */
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: Arial, sans-serif; /* Устанавливаем стандартный шрифт */
-  font-size: 16px; /* Устанавливаем размер шрифта */
-  font-weight: normal; /* Устанавливаем нормальный вес шрифта */
-  color: #000; /* Устанавливаем цвет текста по умолчанию */
-  background-color: #fff; /* Устанавливаем цвет фона по умолчанию */
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  color: #000;
+  background-color: #fff;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: normal; /* Убираем жирный шрифт у заголовков */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
 }
 
-ul, ol {
-  list-style: none; /* Убираем маркеры у списков */
+ul,
+ol {
+  list-style: none;
 }
 
 a {
-  text-decoration: none; /* Убираем подчеркивание у ссылок */
-  color: inherit; /* Устанавливаем цвет ссылок по умолчанию */
+  text-decoration: none;
+  color: inherit;
 }
 
 img {
-  max-width: 100%; /* Устанавливаем максимальную ширину изображений */
-  height: auto; /* Устанавливаем автоматическую высоту изображений */
+  max-width: 100%;
+  height: auto;
 }
-

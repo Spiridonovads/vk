@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import appStore from "../../configs/store/AppStore/AppStore";
 import { App } from "./App";
 import toast from "react-hot-toast";
