@@ -1,6 +1,6 @@
 export const getData = async (page: number, sort: string) => {
   const response = await fetch(
-    `https://api.github.com/search/repositories?q=stars:>1&sort=${sort}&order=desc&per_page=20&page=${page}`,
+    `https://api.github.com/search/repositories?q=stars:>1&sort=${sort}&order=desc&per_page=100&page=${page}`,
     {
       method: "GET",
       headers: {

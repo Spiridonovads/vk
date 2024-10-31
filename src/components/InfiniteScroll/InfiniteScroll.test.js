@@ -24,6 +24,7 @@ jest.mock("../../configs/store/AppStore/AppStore", () => ({
       html_url: "link3",
     },
   ],
+  hasMore: true,
 }));
 
 class IntersectionObserverMock {
@@ -67,8 +68,9 @@ describe("InfiniteScroll Component", () => {
     render(
       <InfiniteScroll
         hasMore={true}
-        isLoading={false}
+        loading={false}
         loadMore={loadMoreMock}
+        items={appStore.items}
       />
     );
 
@@ -81,8 +83,9 @@ describe("InfiniteScroll Component", () => {
     render(
       <InfiniteScroll
         hasMore={true}
-        isLoading={false}
+        loading={false}
         loadMore={loadMoreMock}
+        items={appStore.items}
       />
     );
 
@@ -101,11 +104,14 @@ describe("InfiniteScroll Component", () => {
   });
 
   it("does not call loadMore when hasMore is false", () => {
+    appStore.hasMore = false;
+
     render(
       <InfiniteScroll
         hasMore={false}
-        isLoading={false}
+        loading={false}
         loadMore={loadMoreMock}
+        items={appStore.items}
       />
     );
 

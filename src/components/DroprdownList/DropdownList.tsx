@@ -1,4 +1,5 @@
 import * as React from "react";
+import { forwardRef } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material";
 import style from "./style.module.css";
@@ -12,7 +13,7 @@ export interface DropdownListProps {
   setValue: (event: SelectChangeEvent<string>) => void;
 }
 
-export const DropdownList = React.forwardRef<HTMLDivElement, DropdownListProps>(
+export const DropdownList = forwardRef<HTMLDivElement, DropdownListProps>(
   ({ options, optionsContent, id, label, value, setValue }, ref) => {
     return (
       <div ref={ref} className={style.wrapper}>
@@ -37,4 +38,3 @@ export const DropdownList = React.forwardRef<HTMLDivElement, DropdownListProps>(
     );
   }
 );
-

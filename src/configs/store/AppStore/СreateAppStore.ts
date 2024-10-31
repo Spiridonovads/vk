@@ -1,4 +1,4 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { getData } from "../../../utils/api";
 
 export interface Item {
@@ -14,21 +14,18 @@ class СreateAppStore {
   hasMore: boolean = true;
   itemsCount: number = 0;
   error: string = "";
+  loading: boolean = false;
 
   constructor() {
-    makeObservable(this, {
-      items: observable,
-      page: observable,
-      hasMore: observable,
-      error: observable,
-      fetchData: action,
-      updatePagination: action,
-      removeItem: action,
-      clearEverything: action,
-    });
+    makeAutoObservable(this);
+  }
+
+  setLoading(loading: boolean) {
+    this.loading = loading;
   }
 
   async fetchData(sort?: string) {
+    this.setLoading(true);
     try {
       if (sort) {
         this.clearEverything();
@@ -54,12 +51,14 @@ class СreateAppStore {
           this.error = "An unknown error occurred";
         }
       });
+    } finally {
+      this.setLoading(false);
     }
   }
 
   updatePagination() {
     this.page += 1;
-    this.itemsCount += 20;
+    this.itemsCount += 100;
   }
 
   clearEverything() {

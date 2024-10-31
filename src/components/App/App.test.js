@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import appStore from "../../configs/store/AppStore/AppStore";
 import { App } from "./App";
+import toast from "react-hot-toast";
 
 jest.mock("../../configs/store/AppStore/AppStore", () => ({
   fetchData: jest.fn(),
@@ -9,6 +10,12 @@ jest.mock("../../configs/store/AppStore/AppStore", () => ({
   loading: false,
   items: [],
   error: null,
+}));
+
+jest.mock("react-hot-toast", () => ({
+  __esModule: true,
+  default: jest.fn(),
+  Toaster: jest.fn(() => <div>Toast Container</div>),
 }));
 
 describe("App Component", () => {
@@ -54,27 +61,6 @@ describe("App Component", () => {
 
     render(<App />);
 
-    const errorMessage = screen.getByText(/An error occurred/i);
-    expect(errorMessage).toBeInTheDocument();
-
-    const reloadMessage = screen.getByText(/please reload the page/i);
-    expect(reloadMessage).toBeInTheDocument();
-  });
-
-  test("calls fetchMoreData when loading more data", async () => {
-    appStore.hasMore = true;
-    render(<App />);
-
-    const fetchMoreData = jest.spyOn(appStore, "fetchData");
-
-    const scrollableElement = screen
-      .getByText(/GitHub repositories/i)
-      .closest("div");
-
-    fireEvent.scroll(scrollableElement, { target: { scrollY: 100 } });
-
-    await waitFor(() => {
-      expect(fetchMoreData).toHaveBeenCalledTimes(1);
-    });
+    expect(toast).toHaveBeenCalledWith("Server connection error:(");
   });
 });

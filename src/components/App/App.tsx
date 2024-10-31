@@ -1,14 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  ForwardedRef,
+  useRef,
+} from "react";
+import { Toaster } from "react-hot-toast";
 import { observer } from "mobx-react-lite";
 import { InfiniteScroll } from "../InfiniteScroll/InfiniteScroll";
 import { DropdownList } from "../DroprdownList/DropdownList";
 import appStore from "../../configs/store/AppStore/AppStore";
 import { SelectChangeEvent } from "@mui/material/Select";
-
+import toast from "react-hot-toast";
 import { Container, Typography } from "@mui/material";
 
 export const App = observer(() => {
   const [filterState, setFilterState] = useState<string>("stars");
+  const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
 
   const appFormRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +34,12 @@ export const App = observer(() => {
 
   useEffect(() => {
     appStore.fetchData();
-  }, []);
+    if (isFirstRender) {
+      sortNotify();
+      setIsFirstRender(false);
+    }
+    setIsFirstRender(true);
+  }, [isFirstRender]);
 
   const handleAppOptionChange = (event: SelectChangeEvent<string>) => {
     if (event.target.value !== filterState) {
@@ -35,8 +48,19 @@ export const App = observer(() => {
     }
   };
 
+  const errorNotify = () => {
+    toast("Server connection error:(");
+  };
+
+  function sortNotify() {
+    toast(
+      "Be careful! \n Changes to the sorting will reset all previously saved data"
+    );
+  }
+
   return (
     <>
+      <Toaster />
       <Container
         sx={{
           display: "flex",
@@ -61,31 +85,14 @@ export const App = observer(() => {
           value={filterState}
           setValue={handleAppOptionChange}
         />
-        {appStore.items && (
-          <InfiniteScroll
-            hasMore={appStore.hasMore}
-            loadMore={fetchMoreData}
-          />
-        )}
+        <InfiniteScroll
+          items={appStore.items}
+          hasMore={appStore.hasMore}
+          loadMore={fetchMoreData}
+          loading={appStore.loading}
+        />
       </Container>
-      {appStore.error && (
-        <>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ textAlign: "center", marginTop: "20px" }}
-          >
-            {appStore.error}
-          </Typography>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ textAlign: "center", marginTop: "20px" }}
-          >
-            please reload the page
-          </Typography>
-        </>
-      )}
+      {appStore.error && errorNotify()}
     </>
   );
 });
