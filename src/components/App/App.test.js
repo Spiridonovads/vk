@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import appStore from "../../configs/store/AppStore/AppStore";
 import { App } from "./App";
 import toast from "react-hot-toast";
@@ -56,11 +56,13 @@ describe("App Component", () => {
     expect(appStore.fetchData).toHaveBeenCalledWith("updated");
   });
 
-  test("shows error message when there is an error", async () => {
-    appStore.error = "An error occurred";
-
+  test("shows first render messager", async () => {
     render(<App />);
 
-    expect(toast).toHaveBeenCalledWith("Server connection error:(");
+    await waitFor(() => {
+      expect(toast).toHaveBeenCalledWith(
+        "Be careful! \n Changes to the sorting will reset all previously saved data"
+      );
+    });
   });
 });
